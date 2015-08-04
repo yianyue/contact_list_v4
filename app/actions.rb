@@ -10,6 +10,11 @@ get '/contacts' do
 end
 
 post '/contacts' do
-   @contact = Contact.new(params["contact"])
-   @contact.save!
+   @contact = Contact.new(params[:contact]) # both symbol and string as params key work
+   @contact.save
+   @contact.to_json
+end
+
+delete '/contacts/:id' do
+  @contact = Contact.find(params[:id])
 end
