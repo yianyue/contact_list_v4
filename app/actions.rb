@@ -10,6 +10,6 @@ get '/contacts' do
 end
 
 post '/contacts' do
-  @contact = Contact.new.from_json(data)
-  @contact.save!
+   @contact = Contact.new(params["contact"])
+   @contact.save!
 end

@@ -35,13 +35,14 @@ ContactServer.getAll(function(contacts){
 
 $('form').submit(function(e){
   e.preventDefault();
-  var contact = {
+  var contact = { contact: {
     first_name: $('#first_name').val(),
     last_name: $('#last_name').val(),
     email: $('#email').val(),
     phone_num: $('#phone_num').val()
+    }
   }
-  console.log(contact);
+  ContactServer.add(contact);
 });
 
 });
