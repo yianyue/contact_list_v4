@@ -27,7 +27,7 @@ $(document).ready(function() {
         method: "DELETE",
         url: "/contacts/"+id
       }).done(function(){
-        ClientData.remove(id);
+        // Display.remove should be here
       });
     }
   }
@@ -65,23 +65,23 @@ $(document).ready(function() {
       .append('<div class="detail">'+contact.email+'</div>');
       $('#contacts').find('div.detail').hide();
     },
-    remove: function(id){
-      $('#'+id).remove();
+    remove: function(item){
+      item.remove();
     },
-    clearForm: function(id){
-      $('form#'+ id).each(function(){
+    clearForm: function(form){
+      form.each(function(){
           this.reset();
       }); 
     },
-    toggleDetail: function(id){
-      $('#'+id).find('div.detail').toggle();
+    toggleDetail: function(item){
+      item.find('div.detail').toggle();
     },
-    editForm: function(id){
-      var contact = ClientData.getById(id);
+    editForm: function(item){
+      var contact = ClientData.getById(item.attr('id'));
       var form = $('form#edit');
       form.detach();
-      $('#'+id).append(form);
-      form.show();
+      item.append(form);
+      form.toggle();
     }
   }
 
@@ -93,23 +93,25 @@ $(document).ready(function() {
     e.preventDefault();
     var contact = $(this).serialize();
     ContactServer.add(contact);
-    Display.clearForm('add-new');
+    Display.clearForm($(this));
   });
 
   // B/C buttons are dynamically generated and do not exist at document.ready
   $('ul#contacts').on('click','button.detail', function(){
     // parent() should also work
-    var id = $(this).closest('li').attr('id');
-    Display.toggleDetail(id);
+    var item = $(this).closest('li');
+    Display.toggleDetail(item);
   });
 
   $('ul#contacts').on('click','button.delete', function(){
-    ContactServer.remove($(this).closest('li').attr('id'));
+    var item = $(this).closest('li');
+    ContactServer.remove(item.attr('id'));
+    Display.remove(item);
   });
 
   $('ul#contacts').on('click','button.edit', function(){
-    var id = $(this).closest('li').attr('id');
-    Display.editForm(id);
+    var item = $(this).closest('li');
+    Display.editForm(item);
   });
 
   $('#edit').on('submit',function(e){

@@ -16,7 +16,14 @@ post '/contacts' do
   @contact.to_json # only really need the id
 end
 
+put '/contacts/:id' do
+  @contact = Contact.find(params[:id])
+  @contact.update(params[:contact])
+  content_type :json
+  @contact.to_json
+end
+
 delete '/contacts/:id' do
   @contact = Contact.find(params[:id])
-  @contact.destroy!
+  @contact.destroy
 end
