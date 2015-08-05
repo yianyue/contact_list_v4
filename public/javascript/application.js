@@ -31,15 +31,18 @@ $(document).ready(function() {
       });
     },
 
-    update: function(contact){
+    update: function(id, contact){
       $.ajax({
         method: "PUT",
-        url: "/contacts/"+contact.id
+        url: "/contacts/"+id,
+        dataType: 'json',
+        data: contact
       }).done(function(response){
       // update DOM
-
+      console.log('should update dom');
       });
     }
+
   }
 
   // storing data on client side
@@ -60,7 +63,6 @@ $(document).ready(function() {
     getById: function(id){
       return this.localData[id];
     }
-
   }
 
   // DOM manipulations
@@ -105,15 +107,15 @@ $(document).ready(function() {
           // TODO: there's gotta be a better way
           input.value = contact[input.name.split('[')[1].split(']')[0]];
         }
-
       });
     }
   }
 
-  // display all contacts on load
+  // display all contacts and hide edit form on load
   ContactServer.getAll();
   $('#edit').hide();
 
+  // submit forms
   $('#add-new').on('submit', function(e){
     e.preventDefault();
     var contact = $(this).serialize();
@@ -121,6 +123,16 @@ $(document).ready(function() {
     Display.clearForm($(this));
   });
 
+  $('#edit').on('submit',function(e){
+    e.preventDefault();
+    var contact = $(this).serialize();
+    var id = $(this).closest('li').attr('id');
+    ContactServer.update(id, contact);
+    // Display.clearForm($(this));
+  });
+
+
+  // button click events
   // B/C buttons are dynamically generated and do not exist at document.ready
   $('ul#contacts').on('click','button.detail', function(){
     // parent() should also work
@@ -138,10 +150,6 @@ $(document).ready(function() {
   $('ul#contacts').on('click','button.edit', function(){
     var item = $(this).closest('li');
     Display.editForm(item);
-  });
-
-  $('#edit').on('submit',function(e){
-    e.preventDefault();
   });
 
 });
