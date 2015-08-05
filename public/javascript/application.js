@@ -29,6 +29,16 @@ $(document).ready(function() {
       }).done(function(){
         // Display.remove should be here
       });
+    },
+
+    update: function(contact){
+      $.ajax({
+        method: "PUT",
+        url: "/contacts/"+contact.id
+      }).done(function(response){
+      // update DOM
+
+      });
     }
   }
 
@@ -46,7 +56,6 @@ $(document).ready(function() {
     },
     remove: function(id){
       delete this.localData[id];
-      Display.remove(id);
     },
     getById: function(id){
       return this.localData[id];
@@ -65,23 +74,39 @@ $(document).ready(function() {
       .append('<div class="detail">'+contact.email+'</div>');
       $('#contacts').find('div.detail').hide();
     },
+
     remove: function(item){
       item.remove();
     },
+
     clearForm: function(form){
       form.each(function(){
           this.reset();
       }); 
     },
+
     toggleDetail: function(item){
       item.find('div.detail').toggle();
     },
+
     editForm: function(item){
       var contact = ClientData.getById(item.attr('id'));
       var form = $('form#edit');
       form.detach();
       item.append(form);
       form.toggle();
+      this.populateFrom(form, contact);
+    },
+
+    populateFrom: function(form, contact){
+      var inputs = form.find(':input');
+      $.each(inputs, function(i, input){
+        if (input.type == 'text'){
+          // TODO: there's gotta be a better way
+          input.value = contact[input.name.split('[')[1].split(']')[0]];
+        }
+
+      });
     }
   }
 
@@ -106,6 +131,7 @@ $(document).ready(function() {
   $('ul#contacts').on('click','button.delete', function(){
     var item = $(this).closest('li');
     ContactServer.remove(item.attr('id'));
+    // Display.remove should only be called upon success
     Display.remove(item);
   });
 
