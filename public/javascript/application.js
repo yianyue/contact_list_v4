@@ -38,8 +38,7 @@ $(document).ready(function() {
         dataType: 'json',
         data: contact
       }).done(function(response){
-      // update DOM
-      console.log('should update dom');
+        Display.update(response);
       });
     }
 
@@ -50,11 +49,11 @@ $(document).ready(function() {
     localData: {},
     add: function(contact){
       this.localData[contact.id] = contact;
-      Display.add(contact);
     },
     addAll: function(contacts){
       $.each(contacts,function(i, contact){
         ClientData.add(contact);
+        Display.add(contact);
       });
     },
     remove: function(id){
@@ -67,14 +66,29 @@ $(document).ready(function() {
 
   // DOM manipulations
   var Display = {
-    add: function(contact){
-      $('#contacts').append('<li class="contact" id="'+contact.id+'"></li>')
-      $('#'+contact.id).append(contact.first_name+" "+contact.last_name)
+    appendToList: function(item, contact){
+      item.append(contact.first_name+" "+contact.last_name)
       .append("<button class='detail'>detail</button>")
       .append("<button class='delete'>delete</button>")
       .append("<button class='edit'>edit</button>")
       .append('<div class="detail">'+contact.email+'</div>');
-      $('#contacts').find('div.detail').hide();
+      item.find('div.detail').hide();
+    },
+
+    add: function(contact){
+      $('#contacts').append('<li class="contact" id="'+contact.id+'"></li>');
+      var item = $('#'+contact.id);
+      this.appendToList(item, contact);
+    },
+
+    toggleDetail: function(item){
+      item.find('div.detail').toggle();
+    },
+
+    update: function(contact){
+      var item = $('#'+contact.id);
+      item.empty();
+      this.appendToList(item, contact);
     },
 
     remove: function(item){
@@ -85,10 +99,6 @@ $(document).ready(function() {
       form.each(function(){
           this.reset();
       }); 
-    },
-
-    toggleDetail: function(item){
-      item.find('div.detail').toggle();
     },
 
     editForm: function(item){
@@ -128,9 +138,8 @@ $(document).ready(function() {
     var contact = $(this).serialize();
     var id = $(this).closest('li').attr('id');
     ContactServer.update(id, contact);
-    // Display.clearForm($(this));
+    $(this).toggle();
   });
-
 
   // button click events
   // B/C buttons are dynamically generated and do not exist at document.ready
