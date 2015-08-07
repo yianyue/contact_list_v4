@@ -77,15 +77,12 @@ $(document).ready(function() {
     },
 
     add: function(contact){
-      $("#contact-list").load("template #contact-list",function(){
+      $("#contact-list").load("template #contact-list li",function(){
         var template = $('#contact-list').html();
-        var output = Mustache.render(template);
-        debugger;
-        $(this).html(output);
+        var output = Mustache.render(template, contact.first_name);
+        console.log('output: ' + output);
+        $(this).append($(output));
       });
-      // $('#contacts').append('<li class="contact" id="'+contact.id+'"></li>');
-      // var item = $('#'+contact.id);
-      // this.appendToList(item, contact);
     },
 
     toggleDetail: function(item){
