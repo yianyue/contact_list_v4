@@ -1,23 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!--
-    normalize.css removes cross-browser differences in defaults, e.g.,
-    differences in how form elements appear between Firefox and IE
-    See: http://necolas.github.com/normalize.css/
-  -->
-  <link rel="stylesheet" href="/stylesheets/normalize.css">
+
   <!--
     application.css is where you put your styles
+    materialize.scss taken from the materialize-sass gem. can't figure out how to work the gem.
   -->
   <link rel="stylesheet" href="/stylesheets/application.css">
+  
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/js/materialize.min.js"></script> 
+ 
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.1.3/mustache.min.js'></script>
+
 
   <title></title>
 </head>
 <body>
+<div class="container">
   <%= yield %>
+</div>
   <script src="/javascript/application.js"></script>
 </body>
 </html>

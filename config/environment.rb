@@ -31,3 +31,10 @@ require APP_ROOT.join('config', 'database')
 
 # Load the routes / actions
 require APP_ROOT.join('app', 'actions')
+
+# use sass
+require 'sass/plugin/rack'
+
+# use scss for stylesheets
+Sass::Plugin.options[:style] = :compressed
+use Sass::Plugin::Rack

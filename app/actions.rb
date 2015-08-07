@@ -3,6 +3,11 @@ get '/' do
   erb :index
 end
 
+# loading the mustache template
+get '/template' do
+  erb :template
+end
+
 get '/contacts' do
   content_type :json
   Contact.all.to_json  

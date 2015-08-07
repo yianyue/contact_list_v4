@@ -49,11 +49,11 @@ $(document).ready(function() {
     localData: {},
     add: function(contact){
       this.localData[contact.id] = contact;
+      Display.add(contact);
     },
     addAll: function(contacts){
       $.each(contacts,function(i, contact){
         ClientData.add(contact);
-        Display.add(contact);
       });
     },
     remove: function(id){
@@ -67,6 +67,7 @@ $(document).ready(function() {
   // DOM manipulations
   var Display = {
     appendToList: function(item, contact){
+
       item.append(contact.first_name+" "+contact.last_name)
       .append("<button class='detail'>detail</button>")
       .append("<button class='delete'>delete</button>")
@@ -76,9 +77,15 @@ $(document).ready(function() {
     },
 
     add: function(contact){
-      $('#contacts').append('<li class="contact" id="'+contact.id+'"></li>');
-      var item = $('#'+contact.id);
-      this.appendToList(item, contact);
+      $("#contact-list").load("template #contact-list",function(){
+        var template = $('#contact-list').html();
+        var output = Mustache.render(template);
+        debugger;
+        $(this).html(output);
+      });
+      // $('#contacts').append('<li class="contact" id="'+contact.id+'"></li>');
+      // var item = $('#'+contact.id);
+      // this.appendToList(item, contact);
     },
 
     toggleDetail: function(item){
@@ -121,11 +128,21 @@ $(document).ready(function() {
     }
   }
 
+  // Mustache
+  $("#form-template").load("template #contact-form",function(){
+    var template = $('#contact-form').html();
+    var output = Mustache.render(template);
+    $(this).html(output);
+  });
+
   // display all contacts and hide edit form on load
   ContactServer.getAll();
-  $('#edit').hide();
 
-  // submit forms
+  // listeners
+  $('#add-btn').on('click', function(){
+    $("#form-template").toggle();
+  });
+
   $('#add-new').on('submit', function(e){
     e.preventDefault();
     var contact = $(this).serialize();

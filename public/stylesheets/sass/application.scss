@@ -1,0 +1,17 @@
+@import 'materialize';
+
+ul {
+  @extend .collection;
+}
+
+li {
+  @extend .collection-item;
+}
+
+input[type="submit"] {
+  @extend .btn;
+}
+
+.contact-form {
+  
+}
