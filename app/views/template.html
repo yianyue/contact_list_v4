@@ -12,17 +12,19 @@
 </form>
 </div>
 
-<ul id="contact-tmp">
-  <li>{{first_name}} {{last_name}}</li>
-</ul>
+<div id="contact-tmp">
+  <a href="#!" id={{id}}>{{first_name}} {{last_name}}</a>
+</div>
 
-
+<!-- 
     appendToList: function(item, contact){
+    <a class="edit"><i class="material-icons">edit</i></a>
+  <a class="delete"><i class="material-icons">delete</i></a>
 
-      item.append(contact.first_name+" "+contact.last_name)
+
       .append("<button class='detail'>detail</button>")
       .append("<button class='delete'>delete</button>")
       .append("<button class='edit'>edit</button>")
       .append('<div class="detail">'+contact.email+'</div>');
       item.find('div.detail').hide();
-    },
+    }, -->

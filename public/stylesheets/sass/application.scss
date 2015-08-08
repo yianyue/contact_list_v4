@@ -1,10 +1,10 @@
 @import 'materialize';
 
-ul {
+#contact-list {
   @extend .collection;
 }
 
-li {
+#contact-list a {
   @extend .collection-item;
 }
 
@@ -14,4 +14,20 @@ input[type="submit"] {
 
 .contact-form {
   
+}
+
+.edit, .delete {
+  /*@extend .secondary-content;*/
+  @extend .btn-floating;
+  @extend .waves-effect;
+  @extend .waves-light;
+  /*@extend .blue;*/
+}
+
+.edit {
+  @extend .blue;
+}
+
+.delete {
+  @extend .black;
 }
