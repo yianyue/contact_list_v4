@@ -5,7 +5,7 @@ end
 
 # loading the mustache template
 get '/template' do
-  erb :template
+  erb :template, layout:false
 end
 
 get '/contacts' do

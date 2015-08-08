@@ -77,11 +77,13 @@ $(document).ready(function() {
     },
 
     add: function(contact){
-      $("#contact-list").load("template #contact-list li",function(){
-        var template = $('#contact-list').html();
-        var output = Mustache.render(template, contact.first_name);
-        console.log('output: ' + output);
-        $(this).append($(output));
+      var template = $('#contact-tmp').html();
+      var info = Mustache.to_html(template, contact);
+      $('#contact-list').append(info);
+      $("#contact-list").load("template li",function(){
+        var template = $(this).html();
+        var output = Mustache.render(template, {first_name: contact.first_name});
+        $('#contact-list').append(output);
       });
     },
 
