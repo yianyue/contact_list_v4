@@ -66,23 +66,11 @@ $(document).ready(function() {
 
   // DOM manipulations
   var Display = {
-    appendToList: function(item, contact){
-
-      item.append(contact.first_name+" "+contact.last_name)
-      .append("<button class='detail'>detail</button>")
-      .append("<button class='delete'>delete</button>")
-      .append("<button class='edit'>edit</button>")
-      .append('<div class="detail">'+contact.email+'</div>');
-      item.find('div.detail').hide();
-    },
 
     add: function(contact){
-      var template = $('#contact-tmp').html();
-      var info = Mustache.to_html(template, contact);
-      $('#contact-list').append(info);
-      $("#contact-list").load("template li",function(){
-        var template = $(this).html();
-        var output = Mustache.render(template, {first_name: contact.first_name});
+      $.get( "/template", function(template, textStatus, jqXhr) {
+        var tmp = $(template).filter('#contact-tmp').html();
+        var output = Mustache.render(tmp, contact);
         $('#contact-list').append(output);
       });
     },
@@ -128,8 +116,8 @@ $(document).ready(function() {
   }
 
   // Mustache
-  $("#form-template").load("template #contact-form",function(){
-    var template = $('#contact-form').html();
+  $("#contact-form").load("template #form-tmp",function(){
+    var template = $('#form-tmp').html();
     var output = Mustache.render(template);
     $(this).html(output);
   });
@@ -139,7 +127,7 @@ $(document).ready(function() {
 
   // listeners
   $('#add-btn').on('click', function(){
-    $("#form-template").toggle();
+    $("#contact-form").toggle();
   });
 
   $('#add-new').on('submit', function(e){

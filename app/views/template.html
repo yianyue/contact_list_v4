@@ -12,6 +12,17 @@
 </form>
 </div>
 
-<script id="contact-tmp" type="text/template">
-  <li>{{first_name}}</li>
-</script>
+<ul id="contact-tmp">
+  <li>{{first_name}} {{last_name}}</li>
+</ul>
+
+
+    appendToList: function(item, contact){
+
+      item.append(contact.first_name+" "+contact.last_name)
+      .append("<button class='detail'>detail</button>")
+      .append("<button class='delete'>delete</button>")
+      .append("<button class='edit'>edit</button>")
+      .append('<div class="detail">'+contact.email+'</div>');
+      item.find('div.detail').hide();
+    },

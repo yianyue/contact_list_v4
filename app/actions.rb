@@ -5,7 +5,7 @@ end
 
 # loading the mustache template
 get '/template' do
-  erb :template, layout:false
+  send_file 'app/views/template.html'
 end
 
 get '/contacts' do
