@@ -152,24 +152,13 @@ $(document).ready(function() {
   // Listeners for actions on each contact
   // these elements are dynamically generated and do not exist at document.ready
 
-  // expand contact to show detail when clicked
-  // $('#contact-list').on('click', 'li', function(){
-  //   e.preventDefault();
-
-  // });
-
-  // $('#contact-list').on('click','button.detail', function(){
-  //   // parent() should also work
-  //   var item = $(this).closest('li');
-  //   Display.toggleDetail(item);
-  // });
-
-  // $('#contact-list').on('click','button.delete', function(){
-  //   var item = $(this).closest('li');
-  //   ContactServer.remove(item.attr('id'));
-  //   // Display.remove should only be called upon success
-  //   Display.remove(item);
-  // });
+  $('#contact-list').on('click','a.delete', function(e){
+    e.preventDefault();
+    var item = $(this).closest('li');
+    ContactServer.remove(item.attr('id'));
+    // Display.remove should only be called upon success
+    Display.remove(item);
+  });
 
   // $('#contact-list').on('click','button.edit', function(){
   //   var item = $(this).closest('li');

@@ -13,11 +13,13 @@
 </div>
 
 <ul id="contact-tmp">
-  <li>
-    <div class="collapsible-header" id={{id}}>{{first_name}} {{last_name}}</div>
+  <li id={{id}}>
+    <div class="collapsible-header">{{first_name}} {{last_name}}</div>
     <div class="collapsible-body">
       <p>Email: {{email}}</p>
       <p>Phone: {{phone_num}}</p>
+      <a class="edit"><i class="material-icons">edit</i></a>
+      <a class="delete"><i class="material-icons">delete</i></a>
     </div>
   </li>
 </ul>

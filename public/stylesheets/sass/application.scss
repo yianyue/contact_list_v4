@@ -4,7 +4,7 @@ $highlight-color: lighten($base-color, 30%);
 @import 'materialize';
 
 input[type="submit"] {
-  @extend .btn;
+  @extend .btn, .cyan;
 }
 
 #contact-list {
@@ -13,11 +13,14 @@ input[type="submit"] {
     padding-bottom: 0.5em;
   }
 
-  li div:first-child:hover {
+  li div:first-child:hover, div:first-child.active {
     background-color: $highlight-color;
   }
 }
 
+#add-btn {
+  @extend .btn-floating, .btn-large, .waves-effect, .waves-light, .red;
+}
 
 .edit, .delete {
   /*@extend .secondary-content;*/
