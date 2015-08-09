@@ -12,9 +12,15 @@
 </form>
 </div>
 
-<div id="contact-tmp">
-  <a href="#!" id={{id}}>{{first_name}} {{last_name}}</a>
-</div>
+<ul id="contact-tmp">
+  <li>
+    <div class="collapsible-header" id={{id}}>{{first_name}} {{last_name}}</div>
+    <div class="collapsible-body">
+      <p>Email: {{email}}</p>
+      <p>Phone: {{phone_num}}</p>
+    </div>
+  </li>
+</ul>
 
 <!-- 
     appendToList: function(item, contact){

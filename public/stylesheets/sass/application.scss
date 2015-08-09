@@ -1,20 +1,23 @@
+$base-color: #00bcd4;
+$highlight-color: lighten($base-color, 30%);
+
 @import 'materialize';
-
-#contact-list {
-  @extend .collection;
-}
-
-#contact-list a {
-  @extend .collection-item;
-}
 
 input[type="submit"] {
   @extend .btn;
 }
 
-.contact-form {
-  
+#contact-list {
+  p {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+  }
+
+  li div:first-child:hover {
+    background-color: $highlight-color;
+  }
 }
+
 
 .edit, .delete {
   /*@extend .secondary-content;*/

@@ -13,6 +13,11 @@ get '/contacts' do
   Contact.all.to_json  
 end
 
+get '/test' do
+  erb :test, layout: false
+end
+
+
 post '/contacts' do
   @contact = Contact.new(params[:contact]) # both symbol and string as params key work
   @contact.save

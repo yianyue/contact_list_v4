@@ -72,6 +72,8 @@ $(document).ready(function() {
         var tmp = $(template).filter('#contact-tmp').html();
         var output = Mustache.render(tmp, contact);
         $('#contact-list').append(output);
+        $('.collapsible').collapsible();
+        // to work with materialize's collapsible content.
       });
     },
 
@@ -122,7 +124,7 @@ $(document).ready(function() {
     $(this).html(output);
   });
 
-  // display all contacts and hide edit form on load
+  // display all contacts on load
   ContactServer.getAll();
 
   // listeners
@@ -130,11 +132,13 @@ $(document).ready(function() {
     $("#contact-form").toggle();
   });
 
-  $('#add-new').on('submit', function(e){
+  $('#contact-form').on('submit', function(e){
     e.preventDefault();
-    var contact = $(this).serialize();
+    var $form = $(this).find('form');
+    var contact = $form.serialize();
     ContactServer.add(contact);
-    Display.clearForm($(this));
+    Display.clearForm($form);
+    $(this).toggle();
   });
 
   $('#edit').on('submit',function(e){
@@ -145,24 +149,31 @@ $(document).ready(function() {
     $(this).toggle();
   });
 
-  // button click events
-  // B/C buttons are dynamically generated and do not exist at document.ready
-  $('ul#contacts').on('click','button.detail', function(){
-    // parent() should also work
-    var item = $(this).closest('li');
-    Display.toggleDetail(item);
-  });
+  // Listeners for actions on each contact
+  // these elements are dynamically generated and do not exist at document.ready
 
-  $('ul#contacts').on('click','button.delete', function(){
-    var item = $(this).closest('li');
-    ContactServer.remove(item.attr('id'));
-    // Display.remove should only be called upon success
-    Display.remove(item);
-  });
+  // expand contact to show detail when clicked
+  // $('#contact-list').on('click', 'li', function(){
+  //   e.preventDefault();
 
-  $('ul#contacts').on('click','button.edit', function(){
-    var item = $(this).closest('li');
-    Display.editForm(item);
-  });
+  // });
+
+  // $('#contact-list').on('click','button.detail', function(){
+  //   // parent() should also work
+  //   var item = $(this).closest('li');
+  //   Display.toggleDetail(item);
+  // });
+
+  // $('#contact-list').on('click','button.delete', function(){
+  //   var item = $(this).closest('li');
+  //   ContactServer.remove(item.attr('id'));
+  //   // Display.remove should only be called upon success
+  //   Display.remove(item);
+  // });
+
+  // $('#contact-list').on('click','button.edit', function(){
+  //   var item = $(this).closest('li');
+  //   Display.editForm(item);
+  // });
 
 });
