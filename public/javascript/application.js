@@ -35,7 +35,7 @@ $(document).ready(function() {
     update: function(contact){
       $.ajax({
         method: "PUT",
-        url: "/contacts/",
+        url: "/contacts",
         dataType: 'json',
         data: contact
       }).done(function(response){
@@ -69,13 +69,12 @@ $(document).ready(function() {
   var Display = {
 
     add: function(contact){
-      $.get( "/template", function(template, textStatus, jqXhr) {
-        var tmp = $(template).filter('#contact-tmp').html();
-        var output = Mustache.render(tmp, contact);
-        $('#contact-list').append(output);
-        // to work with materialize's js.
-        $('.collapsible').collapsible();
-      });
+      var template = $('#contact-tmp').html();
+      var output = Mustache.render(template, contact);
+      // debugger;
+      $('#contact-list').append(output);
+      // to work with materialize's js.
+      $('.collapsible').collapsible();
     },
 
     toggleDetail: function(item){
@@ -84,8 +83,13 @@ $(document).ready(function() {
 
     update: function(contact){
       var $item = $('#'+contact.id);
-      
-      debugger;
+      // get at the elements inside li
+      var template = $($('#contact-tmp').html()).html();
+      // debugger;
+      var output = Mustache.render(template, contact);
+      $item.html(output);
+      // Can just the text be swapped out?
+      $('.collapsible').collapsible();
     },
 
     remove: function(item){

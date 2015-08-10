@@ -3,11 +3,6 @@ get '/' do
   erb :index
 end
 
-# loading the mustache template
-get '/template' do
-  send_file 'app/views/template.html'
-end
-
 get '/contacts' do
   content_type :json
   Contact.all.to_json  
@@ -25,7 +20,7 @@ post '/contacts' do
   @contact.to_json # only really need the id
 end
 
-put '/contacts/' do
+put '/contacts' do
   @contact = Contact.find(params[:contact][:id])
   @contact.update(params[:contact])
   content_type :json
