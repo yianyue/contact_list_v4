@@ -72,8 +72,8 @@ $(document).ready(function() {
         var tmp = $(template).filter('#contact-tmp').html();
         var output = Mustache.render(tmp, contact);
         $('#contact-list').append(output);
+        // to work with materialize's js.
         $('.collapsible').collapsible();
-        // to work with materialize's collapsible content.
       });
     },
 
@@ -97,17 +97,8 @@ $(document).ready(function() {
       }); 
     },
 
-    editForm: function(item){
-      var contact = ClientData.getById(item.attr('id'));
-      var form = $('form#edit');
-      form.detach();
-      item.append(form);
-      form.toggle();
-      this.populateFrom(form, contact);
-    },
-
-    populateFrom: function(form, contact){
-      var inputs = form.find(':input');
+    populateFrom: function($form, contact){
+      var inputs = $form.find(':input');
       $.each(inputs, function(i, input){
         if (input.type == 'text'){
           // TODO: there's gotta be a better way
@@ -116,53 +107,53 @@ $(document).ready(function() {
       });
     }
   }
-
-  // Mustache
-  $("#contact-form").load("template #form-tmp",function(){
-    var template = $('#form-tmp').html();
-    var output = Mustache.render(template);
-    $(this).html(output);
-  });
-
+  
+  // using modal window for form
   // display all contacts on load
   ContactServer.getAll();
 
   // listeners
-  $('#add-btn').on('click', function(){
-    $("#contact-form").toggle();
-  });
-
-  $('#contact-form').on('submit', function(e){
+  // openning form in a modal with materialize
+  $('#add-btn').on('click', function(e){
     e.preventDefault();
-    var $form = $(this).find('form');
-    var contact = $form.serialize();
-    ContactServer.add(contact);
-    Display.clearForm($form);
-    $(this).toggle();
-  });
-
-  $('#edit').on('submit',function(e){
-    e.preventDefault();
-    var contact = $(this).serialize();
-    var id = $(this).closest('li').attr('id');
-    ContactServer.update(id, contact);
-    $(this).toggle();
+    var $modal = $('#contact-form');
+    var $form = $('#contact-form form');
+    $form.attr('id', 'add-contact-form');
+    $form.find('h3').text('Add a New Contact');
+    $modal.openModal();
   });
 
   // Listeners for actions on each contact
   // these elements are dynamically generated and do not exist at document.ready
+  $('#contact-list').on('click','a.edit', function(e){
+    e.preventDefault();
+    var $item = $(this).closest('li');
+    var $modal = $('#contact-form');
+    var $form = $('#contact-form form');
+    $form.attr('id', 'edit-contact-form');
+    $form.find('h3').text('Edit Contact');
+    var contact = ClientData.getById($item.attr('id'));
+    Display.populateFrom($form, contact);
+    $modal.openModal();
+  });
 
   $('#contact-list').on('click','a.delete', function(e){
     e.preventDefault();
-    var item = $(this).closest('li');
-    ContactServer.remove(item.attr('id'));
-    // Display.remove should only be called upon success
-    Display.remove(item);
+    var $item = $(this).closest('li');
+    ContactServer.remove($item.attr('id'));
+    // TODO: add item back if delete fails
+    Display.remove($item);
   });
 
-  // $('#contact-list').on('click','button.edit', function(){
-  //   var item = $(this).closest('li');
-  //   Display.editForm(item);
-  // });
+  // form (add/edit) submission
+  $('#contact-form').on('submit', function(e){
+    e.preventDefault();
+    var $form = $(this).find('form');
+    var contact = $form.serialize();
+    // TODO: check for add / edit
+    ContactServer.add(contact);
+    Display.clearForm($form);
+    $(this).closeModal();
+  });
 
 });

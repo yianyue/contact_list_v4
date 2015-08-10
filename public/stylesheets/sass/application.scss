@@ -24,9 +24,7 @@ input[type="submit"] {
 
 .edit, .delete {
   /*@extend .secondary-content;*/
-  @extend .btn-floating;
-  @extend .waves-effect;
-  @extend .waves-light;
+  @extend .btn-floating, .waves-effect, .waves-light;
   /*@extend .blue;*/
 }
 
