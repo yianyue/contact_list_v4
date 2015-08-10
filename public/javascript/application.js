@@ -149,11 +149,17 @@ $(document).ready(function() {
   $('#contact-form').on('submit', function(e){
     e.preventDefault();
     var $form = $(this).find('form');
+    // dot notation doesn't work with serialized data
     var contact = $form.serialize();
-    // TODO: check for add / edit
-    ContactServer.add(contact);
-    Display.clearForm($form);
+    debugger;
+    if ($form.attr('id') == 'add-contact-form'){
+      ContactServer.add(contact);
+    } else {
+      // no access to id since it's a modal window...
+      // ContactServer.update(id, contact);    
+    }
     $(this).closeModal();
+    Display.clearForm($form);
   });
 
 });
