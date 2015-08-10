@@ -1,3 +1,4 @@
+
 $(document).ready(function() {
   // ajax requests
   var ContactServer = {
@@ -31,10 +32,10 @@ $(document).ready(function() {
       });
     },
 
-    update: function(id, contact){
+    update: function(contact){
       $.ajax({
         method: "PUT",
-        url: "/contacts/"+id,
+        url: "/contacts/",
         dataType: 'json',
         data: contact
       }).done(function(response){
@@ -82,9 +83,9 @@ $(document).ready(function() {
     },
 
     update: function(contact){
-      var item = $('#'+contact.id);
-      item.empty();
-      this.appendToList(item, contact);
+      var $item = $('#'+contact.id);
+      
+      debugger;
     },
 
     remove: function(item){
@@ -118,7 +119,7 @@ $(document).ready(function() {
     e.preventDefault();
     var $modal = $('#contact-form');
     var $form = $('#contact-form form');
-    $form.attr('id', 'add-contact-form');
+    $form.attr('class', 'add-contact-form');
     $form.find('h3').text('Add a New Contact');
     $modal.openModal();
   });
@@ -130,9 +131,12 @@ $(document).ready(function() {
     var $item = $(this).closest('li');
     var $modal = $('#contact-form');
     var $form = $('#contact-form form');
-    $form.attr('id', 'edit-contact-form');
+    $form.attr('class', 'edit-contact-form');
     $form.find('h3').text('Edit Contact');
-    var contact = ClientData.getById($item.attr('id'));
+    var id = $item.attr('id');
+    var contact = ClientData.getById(id);
+    // pass the contact id to a hidden field on the form for edit submission
+    $form.find('#id').val(id);
     Display.populateFrom($form, contact);
     $modal.openModal();
   });
@@ -140,6 +144,7 @@ $(document).ready(function() {
   $('#contact-list').on('click','a.delete', function(e){
     e.preventDefault();
     var $item = $(this).closest('li');
+    // TODO: alert user
     ContactServer.remove($item.attr('id'));
     // TODO: add item back if delete fails
     Display.remove($item);
@@ -151,12 +156,10 @@ $(document).ready(function() {
     var $form = $(this).find('form');
     // dot notation doesn't work with serialized data
     var contact = $form.serialize();
-    debugger;
-    if ($form.attr('id') == 'add-contact-form'){
+    if ($form.attr('class') == 'add-contact-form'){
       ContactServer.add(contact);
     } else {
-      // no access to id since it's a modal window...
-      // ContactServer.update(id, contact);    
+      ContactServer.update(contact);    
     }
     $(this).closeModal();
     Display.clearForm($form);
