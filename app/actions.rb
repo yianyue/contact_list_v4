@@ -12,7 +12,6 @@ get '/test' do
   erb :test, layout: false
 end
 
-
 post '/contacts' do
   @contact = Contact.new(params[:contact]) # both symbol and string as params key work
   @contact.save
@@ -29,5 +28,7 @@ end
 
 delete '/contacts/:id' do
   @contact = Contact.find(params[:id])
-  @contact.destroy
+  if @contact.destroy
+    params[:id]
+  end
 end

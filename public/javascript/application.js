@@ -7,9 +7,7 @@ $(document).ready(function() {
         method: "GET",
         url: "/contacts",
         dataType: 'json'
-      }).done(function(response){
-        ClientData.addAll(response);
-      });
+      }).done(ClientData.addAll);
     },
 
     add: function(contact){
@@ -18,18 +16,14 @@ $(document).ready(function() {
         url: "/contacts",
         dataType: 'json',
         data: contact
-      }).done(function(response){
-        ClientData.add(response);
-      });
+      }).done(ClientData.add);
     },
 
     remove: function(id){
       $.ajax({
         method: "DELETE",
-        url: "/contacts/"+id
-      }).done(function(){
-        // Display.remove should be here
-      });
+        url: "/contacts/"+id,
+      }).done(ClientData.remove);
     },
 
     update: function(contact){
@@ -38,9 +32,7 @@ $(document).ready(function() {
         url: "/contacts",
         dataType: 'json',
         data: contact
-      }).done(function(response){
-        Display.update(response);
-      });
+      }).done(ClientData.update);
     }
 
   }
@@ -49,7 +41,7 @@ $(document).ready(function() {
   var ClientData = {
     localData: {},
     add: function(contact){
-      this.localData[contact.id] = contact;
+      ClientData.localData[contact.id] = contact;
       Display.add(contact);
     },
     addAll: function(contacts){
@@ -58,10 +50,15 @@ $(document).ready(function() {
       });
     },
     remove: function(id){
-      delete this.localData[id];
+      debugger;
+      delete ClientData.localData[id];
+    },
+    update: function(contact){
+      ClientData.localData[contact.id] = contact;
+      Display.update(contact);
     },
     getById: function(id){
-      return this.localData[id];
+      return ClientData.localData[id];
     }
   }
 
@@ -134,7 +131,7 @@ $(document).ready(function() {
     e.preventDefault();
     var $item = $(this).closest('li');
     var $modal = $('#contact-form');
-    var $form = $('#contact-form form');
+    var $form = $modal.find('form');
     $form.attr('class', 'edit-contact-form');
     $form.find('h3').text('Edit Contact');
     var id = $item.attr('id');
