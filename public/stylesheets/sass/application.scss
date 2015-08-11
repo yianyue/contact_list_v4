@@ -13,8 +13,13 @@ input[type="submit"] {
     padding-bottom: 0.5em;
   }
 
-  li div:first-child:hover, div:first-child.active {
+  li :first-child:hover, .active {
     background-color: $highlight-color;
+    border: none;
+  }
+
+  .collapsible-header {
+    font-weight: bold; 
   }
 }
 

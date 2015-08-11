@@ -24,8 +24,10 @@
           <div class="collapsible-body">
             <p>Email: {{email}}</p>
             <p>Phone: {{phone_num}}</p>
-            <a class="edit modal-trigger" href="#contact-form"><i class="material-icons">edit</i></a>
-            <a class="delete"><i class="material-icons">delete</i></a>
+            <div>
+              <a class="edit modal-trigger" href="#contact-form"><i class="material-icons">edit</i></a>
+              <a class="delete"><i class="material-icons">delete</i></a>
+            </div>
         </div>
       </li>
   </script>
@@ -34,8 +36,13 @@
   <title></title>
 </head>
 <body>
+<a id='add-btn' class="modal-trigger" href="#contact-form"><i class="material-icons">add</i></a>
 <div class="container">
+
+  
+
   <%= yield %>
+
 </div>
   <script src="/javascript/application.js"></script>
 </body>
