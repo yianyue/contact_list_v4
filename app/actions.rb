@@ -14,16 +14,24 @@ end
 
 post '/contacts' do
   @contact = Contact.new(params[:contact]) # both symbol and string as params key work
-  @contact.save
   content_type :json
-  @contact.to_json # only really need the id
+  if @contact.save
+    @contact.to_json # only really need the id
+  else
+    status 422
+    @contact.errors.to_json
+  end
 end
 
 put '/contacts' do
   @contact = Contact.find(params[:contact][:id])
-  @contact.update(params[:contact])
   content_type :json
-  @contact.to_json
+  if @contact.update(params[:contact])
+    @contact.to_json
+  else
+    status 422
+    @contact.errors.to_json
+  end
 end
 
 delete '/contacts/:id' do

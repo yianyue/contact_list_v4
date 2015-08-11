@@ -7,7 +7,7 @@ $(document).ready(function() {
         method: "GET",
         url: "/contacts",
         dataType: 'json'
-      }).done(ClientData.addAll);
+      }).done(ClientData.addAll)        
     },
 
     add: function(contact){
@@ -16,7 +16,8 @@ $(document).ready(function() {
         url: "/contacts",
         dataType: 'json',
         data: contact
-      }).done(ClientData.add);
+      }).done(ClientData.add)
+        .fail(Display.err);
     },
 
     remove: function(id){
@@ -32,7 +33,8 @@ $(document).ready(function() {
         url: "/contacts",
         dataType: 'json',
         data: contact
-      }).done(ClientData.update);
+      }).done(ClientData.update)
+        .fail(Display.err);
     }
 
   }
@@ -50,7 +52,6 @@ $(document).ready(function() {
       });
     },
     remove: function(id){
-      debugger;
       delete ClientData.localData[id];
     },
     update: function(contact){
@@ -66,12 +67,22 @@ $(document).ready(function() {
   var Display = {
 
     add: function(contact){
+      $('#contact-form').closeModal();
       var template = $('#contact-tmp').html();
       var output = Mustache.render(template, contact);
-      // debugger;
       $('#contact-list').append(output);
       // to work with materialize's js.
       $('.collapsible').collapsible();
+      // TODO: create an initial load function; this message is only when a new contact is added.
+      Materialize.toast(contact.first_name + ' is on the list!', 5000);
+    },
+
+    err: function(errors){
+      for (var key in errors.responseJSON){
+        errors.responseJSON[key].forEach(function(val){
+          console.log(key, val);
+         })
+      }
     },
 
     toggleDetail: function(item){
@@ -79,18 +90,20 @@ $(document).ready(function() {
     },
 
     update: function(contact){
+      $('#contact-form').closeModal();
       var $item = $('#'+contact.id);
       // get at the elements inside li
       var template = $($('#contact-tmp').html()).html();
-      // debugger;
       var output = Mustache.render(template, contact);
       $item.html(output);
       // Can just the text be swapped out?
       $('.collapsible').collapsible();
+      Materialize.toast(contact.first_name + '\' info has been updated!', 5000);
     },
 
     remove: function(item){
       item.remove();
+      Materialize.toast('<span>Item Deleted</span><a class=&quot;btn-flat yellow-text&quot; href=&quot;#!&quot;>Undo<a>', 5000);
     },
 
     clearForm: function(form){
@@ -161,9 +174,7 @@ $(document).ready(function() {
       ContactServer.add(contact);
     } else {
       ContactServer.update(contact);    
-    }
-    $(this).closeModal();
-    Display.clearForm($form);
+    }    
   });
 
 });
