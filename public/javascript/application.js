@@ -78,11 +78,14 @@ $(document).ready(function() {
     },
 
     err: function(errors){
-      for (var key in errors.responseJSON){
-        errors.responseJSON[key].forEach(function(val){
-          console.log(key, val);
-         })
-      }
+      var $form = $('#contact-form form');
+      var inputs = $form.find(':input');
+      $.each(inputs, function(i, input){
+        if (errors.responseJSON[input.id]){          
+          $label = $('label[for="'+$(input).attr('id')+'"]');
+          $label.after(errors.responseJSON[input.id]);
+        }
+      });
     },
 
     toggleDetail: function(item){
@@ -98,7 +101,7 @@ $(document).ready(function() {
       $item.html(output);
       // Can just the text be swapped out?
       $('.collapsible').collapsible();
-      Materialize.toast(contact.first_name + '\' info has been updated!', 5000);
+      Materialize.toast(contact.first_name + '\'s info has been updated!', 5000);
     },
 
     remove: function(item){
@@ -106,8 +109,9 @@ $(document).ready(function() {
       Materialize.toast('<span>Item Deleted</span><a class=&quot;btn-flat yellow-text&quot; href=&quot;#!&quot;>Undo<a>', 5000);
     },
 
-    clearForm: function(form){
-      form.each(function(){
+    clearForm: function(){
+      $form = $('#contact-form form');
+      $form.each(function(){
           this.reset();
       }); 
     },
@@ -123,7 +127,6 @@ $(document).ready(function() {
     }
   }
   
-  // using modal window for form
   // display all contacts on load
   ContactServer.getAll();
 
@@ -135,19 +138,21 @@ $(document).ready(function() {
     var $form = $('#contact-form form');
     $form.attr('class', 'add-contact-form');
     $form.find('h3').text('Add a New Contact');
+    Display.clearForm();
     $modal.openModal();
   });
 
   // Listeners for actions on each contact
   // these elements are dynamically generated and do not exist at document.ready
+
+  // edit a contact
   $('#contact-list').on('click','a.edit', function(e){
-    e.preventDefault();
-    var $item = $(this).closest('li');
+    e.preventDefault();    
+    var id = $(this).closest('li').attr('id');
     var $modal = $('#contact-form');
     var $form = $modal.find('form');
     $form.attr('class', 'edit-contact-form');
     $form.find('h3').text('Edit Contact');
-    var id = $item.attr('id');
     var contact = ClientData.getById(id);
     // pass the contact id to a hidden field on the form for edit submission
     $form.find('#id').val(id);
@@ -155,6 +160,7 @@ $(document).ready(function() {
     $modal.openModal();
   });
 
+  // delete a contact
   $('#contact-list').on('click','a.delete', function(e){
     e.preventDefault();
     var $item = $(this).closest('li');
