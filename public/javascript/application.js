@@ -1,3 +1,4 @@
+
 $(document).ready(function() {
   // ajax requests
   var ContactServer = {
@@ -6,9 +7,7 @@ $(document).ready(function() {
         method: "GET",
         url: "/contacts",
         dataType: 'json'
-      }).done(function(response){
-        ClientData.addAll(response);
-      });
+      }).done(ClientData.addAll)        
     },
 
     add: function(contact){
@@ -17,29 +16,25 @@ $(document).ready(function() {
         url: "/contacts",
         dataType: 'json',
         data: contact
-      }).done(function(response){
-        ClientData.add(response);
-      });
+      }).done(ClientData.add)
+        .fail(Display.err);
     },
 
     remove: function(id){
       $.ajax({
         method: "DELETE",
-        url: "/contacts/"+id
-      }).done(function(){
-        // Display.remove should be here
-      });
+        url: "/contacts/"+id,
+      }).done(ClientData.remove);
     },
 
-    update: function(id, contact){
+    update: function(contact){
       $.ajax({
         method: "PUT",
-        url: "/contacts/"+id,
+        url: "/contacts",
         dataType: 'json',
         data: contact
-      }).done(function(response){
-        Display.update(response);
-      });
+      }).done(ClientData.update)
+        .fail(Display.err);
     }
 
   }
@@ -48,37 +43,49 @@ $(document).ready(function() {
   var ClientData = {
     localData: {},
     add: function(contact){
-      this.localData[contact.id] = contact;
+      ClientData.localData[contact.id] = contact;
+      Display.add(contact);
     },
     addAll: function(contacts){
       $.each(contacts,function(i, contact){
         ClientData.add(contact);
-        Display.add(contact);
       });
     },
     remove: function(id){
-      delete this.localData[id];
+      delete ClientData.localData[id];
+    },
+    update: function(contact){
+      ClientData.localData[contact.id] = contact;
+      Display.update(contact);
     },
     getById: function(id){
-      return this.localData[id];
+      return ClientData.localData[id];
     }
   }
 
   // DOM manipulations
   var Display = {
-    appendToList: function(item, contact){
-      item.append(contact.first_name+" "+contact.last_name)
-      .append("<button class='detail'>detail</button>")
-      .append("<button class='delete'>delete</button>")
-      .append("<button class='edit'>edit</button>")
-      .append('<div class="detail">'+contact.email+'</div>');
-      item.find('div.detail').hide();
-    },
 
     add: function(contact){
-      $('#contacts').append('<li class="contact" id="'+contact.id+'"></li>');
-      var item = $('#'+contact.id);
-      this.appendToList(item, contact);
+      $('#contact-form').closeModal();
+      var template = $('#contact-tmp').html();
+      var output = Mustache.render(template, contact);
+      $('#contact-list').append(output);
+      // to work with materialize's js.
+      $('.collapsible').collapsible();
+      // TODO: create an initial load function; this message is only when a new contact is added.
+      Materialize.toast(contact.first_name + ' is on the list!', 5000);
+    },
+
+    err: function(errors){
+      var $form = $('#contact-form form');
+      var inputs = $form.find(':input');
+      $.each(inputs, function(i, input){
+        if (errors.responseJSON[input.id]){          
+          $label = $('label[for="'+$(input).attr('id')+'"]');
+          $label.after(errors.responseJSON[input.id]);
+        }
+      });
     },
 
     toggleDetail: function(item){
@@ -86,32 +93,31 @@ $(document).ready(function() {
     },
 
     update: function(contact){
-      var item = $('#'+contact.id);
-      item.empty();
-      this.appendToList(item, contact);
+      $('#contact-form').closeModal();
+      var $item = $('#'+contact.id);
+      // get at the elements inside li
+      var template = $($('#contact-tmp').html()).html();
+      var output = Mustache.render(template, contact);
+      $item.html(output);
+      // Can just the text be swapped out?
+      $('.collapsible').collapsible();
+      Materialize.toast(contact.first_name + '\'s info has been updated!', 5000);
     },
 
     remove: function(item){
       item.remove();
+      Materialize.toast('<span>Item Deleted</span><a class=&quot;btn-flat yellow-text&quot; href=&quot;#!&quot;>Undo<a>', 5000);
     },
 
-    clearForm: function(form){
-      form.each(function(){
+    clearForm: function(){
+      $form = $('#contact-form form');
+      $form.each(function(){
           this.reset();
       }); 
     },
 
-    editForm: function(item){
-      var contact = ClientData.getById(item.attr('id'));
-      var form = $('form#edit');
-      form.detach();
-      item.append(form);
-      form.toggle();
-      this.populateFrom(form, contact);
-    },
-
-    populateFrom: function(form, contact){
-      var inputs = form.find(':input');
+    populateFrom: function($form, contact){
+      var inputs = $form.find(':input');
       $.each(inputs, function(i, input){
         if (input.type == 'text'){
           // TODO: there's gotta be a better way
@@ -120,45 +126,61 @@ $(document).ready(function() {
       });
     }
   }
-
-  // display all contacts and hide edit form on load
+  
+  // display all contacts on load
   ContactServer.getAll();
-  $('#edit').hide();
 
-  // submit forms
-  $('#add-new').on('submit', function(e){
+  // listeners
+  // openning form in a modal with materialize
+  $('#add-btn').on('click', function(e){
     e.preventDefault();
-    var contact = $(this).serialize();
-    ContactServer.add(contact);
-    Display.clearForm($(this));
+    var $modal = $('#contact-form');
+    var $form = $('#contact-form form');
+    $form.attr('class', 'add-contact-form');
+    $form.find('h3').text('Add a New Contact');
+    Display.clearForm();
+    $modal.openModal();
   });
 
-  $('#edit').on('submit',function(e){
-    e.preventDefault();
-    var contact = $(this).serialize();
+  // Listeners for actions on each contact
+  // these elements are dynamically generated and do not exist at document.ready
+
+  // edit a contact
+  $('#contact-list').on('click','a.edit', function(e){
+    e.preventDefault();    
     var id = $(this).closest('li').attr('id');
-    ContactServer.update(id, contact);
-    $(this).toggle();
+    var $modal = $('#contact-form');
+    var $form = $modal.find('form');
+    $form.attr('class', 'edit-contact-form');
+    $form.find('h3').text('Edit Contact');
+    var contact = ClientData.getById(id);
+    // pass the contact id to a hidden field on the form for edit submission
+    $form.find('#id').val(id);
+    Display.populateFrom($form, contact);
+    $modal.openModal();
   });
 
-  // button click events
-  // B/C buttons are dynamically generated and do not exist at document.ready
-  $('ul#contacts').on('click','button.detail', function(){
-    // parent() should also work
-    var item = $(this).closest('li');
-    Display.toggleDetail(item);
+  // delete a contact
+  $('#contact-list').on('click','a.delete', function(e){
+    e.preventDefault();
+    var $item = $(this).closest('li');
+    // TODO: alert user
+    ContactServer.remove($item.attr('id'));
+    // TODO: add item back if delete fails
+    Display.remove($item);
   });
 
-  $('ul#contacts').on('click','button.delete', function(){
-    var item = $(this).closest('li');
-    ContactServer.remove(item.attr('id'));
-    // Display.remove should only be called upon success
-    Display.remove(item);
-  });
-
-  $('ul#contacts').on('click','button.edit', function(){
-    var item = $(this).closest('li');
-    Display.editForm(item);
+  // form (add/edit) submission
+  $('#contact-form').on('submit', function(e){
+    e.preventDefault();
+    var $form = $(this).find('form');
+    // dot notation doesn't work with serialized data
+    var contact = $form.serialize();
+    if ($form.attr('class') == 'add-contact-form'){
+      ContactServer.add(contact);
+    } else {
+      ContactServer.update(contact);    
+    }    
   });
 
 });

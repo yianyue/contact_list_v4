@@ -1,0 +1,42 @@
+$base-color: #00bcd4;
+$highlight-color: lighten($base-color, 30%);
+
+@import 'materialize';
+
+input[type="submit"] {
+  @extend .btn, .cyan;
+}
+
+#contact-list {
+  p {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+  }
+
+  li :first-child:hover, .active {
+    background-color: $highlight-color;
+    border: none;
+  }
+
+  .collapsible-header {
+    font-weight: bold; 
+  }
+}
+
+#add-btn {
+  @extend .btn-floating, .btn-large, .waves-effect, .waves-light, .red;
+}
+
+.edit, .delete {
+  /*@extend .secondary-content;*/
+  @extend .btn-floating, .waves-effect, .waves-light;
+  /*@extend .blue;*/
+}
+
+.edit {
+  @extend .blue;
+}
+
+.delete {
+  @extend .black;
+}
